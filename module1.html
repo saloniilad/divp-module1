@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIP Module 1 – Numericals from Gonzalez & Woods</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap');
+
+  :root {
+    --bg: #0d1117;
+    --surface: #161b22;
+    --surface2: #1c2128;
+    --border: #30363d;
+    --accent: #58a6ff;
+    --accent2: #f78166;
+    --accent3: #3fb950;
+    --accent4: #d2a8ff;
+    --accent5: #ffa657;
+    --text: #e6edf3;
+    --text-muted: #7d8590;
+    --text-dim: #484f58;
+    --formula-bg: #13161c;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    padding: 2rem 1rem 4rem;
+  }
+
+  .page-wrapper {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  .header {
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 2rem;
+    margin-bottom: 2.5rem;
+  }
+  .header .badge {
+    display: inline-block;
+    background: rgba(88,166,255,0.12);
+    color: var(--accent);
+    border: 1px solid rgba(88,166,255,0.3);
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    margin-bottom: 1rem;
+  }
+  h1 {
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.2;
+    margin-bottom: 0.5rem;
+  }
+  .header .subtitle {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+
+  /* TOC */
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem 1.8rem;
+    margin-bottom: 2.5rem;
+  }
+  .toc h2 {
+    font-size: 0.75rem;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 0.9rem;
+  }
+  .toc ol {
+    list-style: decimal;
+    padding-left: 1.5rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.3rem 2rem;
+  }
+  .toc li a {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 0.88rem;
+  }
+  .toc li a:hover { text-decoration: underline; }
+
+  /* SECTION */
+  .section {
+    margin-bottom: 3rem;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    background: var(--accent);
+    color: #0d1117;
+    font-weight: 700;
+    font-size: 0.75rem;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .section-num.c2 { background: var(--accent2); }
+  .section-num.c3 { background: var(--accent3); }
+  .section-num.c4 { background: var(--accent4); color: #0d1117; }
+  .section-num.c5 { background: var(--accent5); color: #0d1117; }
+  .section-num.c6 { background: #39d353; color: #0d1117; }
+  .section-num.c7 { background: #f0883e; color: #0d1117; }
+  .section-num.c8 { background: #a371f7; color: #0d1117; }
+
+  h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  /* FORMULA BOX */
+  .formula-box {
+    background: var(--formula-bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 1.1rem 1.4rem;
+    margin: 1rem 0;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9rem;
+    line-height: 1.9;
+  }
+  .formula-box.orange { border-left-color: var(--accent5); }
+  .formula-box.green  { border-left-color: var(--accent3); }
+  .formula-box.purple { border-left-color: var(--accent4); }
+  .formula-box.red    { border-left-color: var(--accent2); }
+
+  .formula-label {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 0.4rem;
+  }
+
+  /* EXAMPLE CARD */
+  .example-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin: 1.2rem 0;
+    overflow: hidden;
+  }
+  .example-card .card-header {
+    background: var(--surface2);
+    padding: 0.7rem 1.2rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--accent);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .example-card .card-header .tag {
+    background: rgba(88,166,255,0.12);
+    border: 1px solid rgba(88,166,255,0.25);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-size: 0.65rem;
+  }
+  .example-card .card-body {
+    padding: 1.2rem 1.4rem;
+  }
+
+  /* TABLE */
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+    margin: 0.8rem 0;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+  .data-table th {
+    background: var(--surface2);
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.5px;
+    padding: 0.5rem 0.9rem;
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .data-table td {
+    padding: 0.4rem 0.9rem;
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .data-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  /* STEP */
+  .step {
+    background: rgba(255,255,255,0.02);
+    border-left: 2px solid var(--text-dim);
+    padding: 0.6rem 1rem;
+    margin: 0.5rem 0;
+    border-radius: 0 4px 4px 0;
+    font-size: 0.9rem;
+  }
+  .step strong {
+    color: var(--accent5);
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  /* GRID */
+  .kernel-grid {
+    display: inline-block;
+    background: var(--formula-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 0.5rem;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.85rem;
+    text-align: center;
+    margin: 0.3rem;
+  }
+  .kernel-grid table { border-collapse: collapse; }
+  .kernel-grid td {
+    width: 36px; height: 32px;
+    border: 1px solid var(--border);
+    text-align: center;
+    vertical-align: middle;
+  }
+  .kernel-grid td.center { color: var(--accent2); font-weight: 700; }
+  .kernels-row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin: 0.8rem 0; }
+  .kernel-label { font-size: 0.75rem; color: var(--text-muted); text-align: center; margin-top: 0.2rem; }
+
+  /* CALLOUT */
+  .callout {
+    display: flex;
+    gap: 0.8rem;
+    background: rgba(255,166,87,0.08);
+    border: 1px solid rgba(255,166,87,0.25);
+    border-radius: 6px;
+    padding: 0.9rem 1.1rem;
+    margin: 0.8rem 0;
+    font-size: 0.88rem;
+  }
+  .callout.info {
+    background: rgba(88,166,255,0.08);
+    border-color: rgba(88,166,255,0.25);
+  }
+  .callout.green {
+    background: rgba(63,185,80,0.08);
+    border-color: rgba(63,185,80,0.25);
+  }
+  .callout .icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+  .callout .body { color: var(--text-muted); }
+  .callout .body strong { color: var(--text); }
+
+  p { margin-bottom: 0.7rem; color: var(--text-muted); }
+  p strong { color: var(--text); }
+  code {
+    background: var(--formula-bg);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 0 5px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.88em;
+    color: var(--accent4);
+  }
+
+  .divider { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+
+  /* DISTANCE GRID */
+  .dist-grid {
+    display: inline-grid;
+    gap: 2px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    text-align: center;
+  }
+  .dist-cell {
+    width: 32px; height: 32px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 3px;
+  }
+  .dist-cell.origin { background: rgba(88,166,255,0.2); color: var(--accent); font-weight: 700; border-color: var(--accent); }
+  .dist-grids-row { display: flex; gap: 2rem; flex-wrap: wrap; margin: 1rem 0; align-items: flex-start; }
+  .dist-group label { font-size: 0.75rem; color: var(--text-muted); display: block; margin-bottom: 0.4rem; font-weight: 600; letter-spacing: 0.5px; }
+</style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="badge">Gonzalez &amp; Woods · 4th Edition</div>
+    <h1>Module 1 – Numericals Compendium</h1>
+    <p class="subtitle">Digital Image &amp; Video Processing · All key worked examples, formulas &amp; solved problems from the textbook</p>
+  </div>
+
+  <!-- TOC -->
+  <div class="toc">
+    <h2>Topics Covered</h2>
+    <ol>
+      <li><a href="#s1">Image Sampling &amp; Quantization</a></li>
+      <li><a href="#s2">Basic Pixel Relationships &amp; Distance</a></li>
+      <li><a href="#s3">Gray-Level Transformations</a></li>
+      <li><a href="#s4">Histogram Equalization &amp; Specification</a></li>
+      <li><a href="#s5">Spatial Filtering</a></li>
+      <li><a href="#s6">First &amp; Second Derivative Filters</a></li>
+      <li><a href="#s7">2D Discrete Fourier Transform (DFT)</a></li>
+      <li><a href="#s8">Frequency Domain Filtering</a></li>
+    </ol>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 1: SAMPLING & QUANTIZATION -->
+  <!-- ================================================================ -->
+  <div class="section" id="s1">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>Image Sampling &amp; Quantization</h2>
+    </div>
+
+    <p>A digital image is produced by <strong>sampling</strong> (digitizing spatial coordinates) and <strong>quantization</strong> (digitizing amplitude/intensity values). These three core formulas appear in virtually every numerical.</p>
+
+    <div class="formula-label">Core Formulas</div>
+    <div class="formula-box">
+      Number of gray levels:        L = 2<sup>k</sup>  &nbsp; (k = bit depth)
+      <br>
+      Number of pixels (resolution): M × N  &nbsp; (rows × columns)
+      <br>
+      Total storage (bits):          b = M × N × k
+      <br>
+      For square images:             b = N² × k
+    </div>
+
+    <div class="example-card">
+      <div class="card-header">📐 Worked Numerical 1 <span class="tag">Storage Size</span></div>
+      <div class="card-body">
+        <p><strong>Q:</strong> How many bits are required to store a 1024 × 1024, 8-bit grayscale image?</p>
+        <div class="step"><strong>Step 1:</strong> M = N = 1024, k = 8 bits (so L = 2⁸ = 256 gray levels)</div>
+        <div class="step"><strong>Step 2:</strong> b = N² × k = 1024² × 8 = 1,048,576 × 8 = 8,388,608 bits</div>
+        <div class="step"><strong>Step 3:</strong> In bytes: 8,388,608 ÷ 8 = 1,048,576 bytes = <strong>1 MB</strong></div>
+        <div class="callout green"><div class="icon">✓</div><div class="body">Formula from Eq. (2-12): <strong>b = M × N × k</strong></div></div>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <div class="card-header">📐 Worked Numerical 2 <span class="tag">Bit Depth</span></div>
+      <div class="card-body">
+        <p><strong>Q:</strong> An image has 512 × 512 pixels and 64 gray levels. Find the bit depth and storage size.</p>
+        <div class="step"><strong>Step 1:</strong> L = 64 = 2<sup>k</sup> → k = 6 bits</div>
+        <div class="step"><strong>Step 2:</strong> b = 512 × 512 × 6 = 262,144 × 6 = <strong>1,572,864 bits = 196,608 bytes ≈ 192 KB</strong></div>
+        <div class="callout"><div class="icon">⚠</div><div class="body"><strong>Always check:</strong> L must be a power of 2. Gray levels = 2, 4, 8, 16, 32, 64, 128, 256 correspond to k = 1, 2, 3, 4, 5, 6, 7, 8.</div></div>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <div class="card-header">📐 Worked Numerical 3 <span class="tag">Resolution &amp; Megabytes</span></div>
+      <div class="card-body">
+        <p><strong>Q:</strong> A 4000 × 3000 pixel, 24-bit color image has 3 channels (RGB), each 8 bits. Find total storage in MB.</p>
+        <div class="step"><strong>Step 1:</strong> Bits per pixel = 3 × 8 = 24 bits</div>
+        <div class="step"><strong>Step 2:</strong> Total bits = 4000 × 3000 × 24 = 288,000,000 bits</div>
+        <div class="step"><strong>Step 3:</strong> In MB = 288,000,000 ÷ (8 × 10⁶) = <strong>36 MB</strong></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 2: PIXEL RELATIONSHIPS & DISTANCE -->
+  <!-- ================================================================ -->
+  <div class="section" id="s2">
+    <div class="section-header">
+      <div class="section-num c2">2</div>
+      <h2>Basic Relationships Between Pixels – Distance Measures</h2>
+    </div>
+
+    <p>For pixels <strong>p</strong> at (x, y) and <strong>q</strong> at (u, v), three distance metrics are defined. These appear as direct formula-substitution problems in exams.</p>
+
+    <div class="formula-box orange">
+      Euclidean:    D<sub>e</sub>(p,q) = √[(x−u)² + (y−v)²]   &nbsp;&nbsp; Eq. (2-19)
+      <br>
+      City-block:   D₄(p,q) = |x−u| + |y−v|                  &nbsp;&nbsp; Eq. (2-20)
+      <br>
+      Chessboard:   D₈(p,q) = max(|x−u|, |y−v|)              &nbsp;&nbsp; Eq. (2-21)
+    </div>
+
+    <div class="example-card">
+      <div class="card-header">📐 Worked Numerical 4 <span class="tag">All Three Distances</span></div>
+      <div class="card-body">
+        <p><strong>Q:</strong> Find D<sub>e</sub>, D₄, D₈ between pixel p at (1, 1) and pixel q at (4, 5).</p>
+        <div class="step"><strong>D<sub>e</sub></strong> = √[(4−1)² + (5−1)²] = √[9 + 16] = √25 = <strong>5</strong></div>
+        <div class="step"><strong>D₄</strong> = |4−1| + |5−1| = 3 + 4 = <strong>7</strong></div>
+        <div class="step"><strong>D₈</strong> = max(|4−1|, |5−1|) = max(3, 4) = <strong>4</strong></div>
+        <div class="callout info"><div class="icon">💡</div><div class="body"><strong>Key property:</strong> D₈ ≤ D<sub>e</sub> ≤ D₄ always holds for integer-coordinate pixels. D₈ is always the smallest (or equal).</div></div>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <div class="card-header">📐 Distance Contour Patterns (From Textbook, pg. 82)</div>
+      <div class="card-body">
+        <p>Pixels within distance ≤ 2 from center (0) form distinct shapes depending on metric:</p>
+        <div class="dist-grids-row">
+          <div class="dist-group">
+            <label>D₄ ≤ 2 → Diamond shape</label>
+            <div class="dist-grid" style="grid-template-columns: repeat(5, 32px)">
+              <div class="dist-cell"></div><div class="dist-cell"></div><div class="dist-cell" style="color:#ffa657">2</div><div class="dist-cell"></div><div class="dist-cell"></div>
+              <div class="dist-cell"></div><div class="dist-cell" style="color:#ffa657">2</div><div class="dist-cell" style="color:#ffa657">1</div><div class="dist-cell" style="color:#ffa657">2</div><div class="dist-cell"></div>
+              <div class="dist-cell" style="color:#ffa657">2</div><div class="dist-cell" style="color:#ffa657">1</div><div class="dist-cell origin">0</div><div class="dist-cell" style="color:#ffa657">1</div><div class="dist-cell" style="color:#ffa657">2</div>
+              <div class="dist-cell"></div><div class="dist-cell" style="color:#ffa657">2</div><div class="dist-cell" style="color:#ffa657">1</div><div class="dist-cell" style="color:#ffa657">2</div><div class="dist-cell"></div>
+              <div class="dist-cell"></div><div class="dist-cell"></div><div class="dist-cell" style="color:#ffa657">2</div><div class="dist-cell"></div><div class="dist-cell"></div>
+            </div>
+          </div>
+          <div class="dist-group">
+            <label>D₈ ≤ 2 → Square shape</label>
+            <div class="dist-grid" style="grid-template-columns: repeat(5, 32px)">
+              <div class="dist-cell" style="color:#d2a8ff">2</div><div class="dist-cell" style="color:#d2a8ff">2</div><div class="dist-cell" style="color:#d2a8ff">2</div><div class="dist-cell" style="color:#d2a8ff">2</div><div class="dist-cell" style="color:#d2a8ff">2</div>
+              <div class="dist-cell" style="color:#d2a8ff">2</div><div class="dist-cell" style="color:#d2a8ff">1</div><div class="dist-cell" style="color:#d2a8ff">1</div><div class="dist-cell" style="color:#d2a8ff">1</div><div class="dist-cell" style="color:#d2a8ff">2</div>
+              <div class="dist-cell" style="color:#d2a8ff">2</div><div class="dist-cell" style="color:#d2a8ff">1</div><div class="dist-cell origin">0</div><div class="dist-cell" style="color:#d2a8ff">1</div><div class="dist-cell" style="color:#d2a8ff">2</div>
+              <div class="dist-cell" style="color:#d2a8ff">2</div><div class="dist-cell" style="color:#d2a8ff">1</div><div class="dist-cell" style="color:#d2a8ff">1</div><div class="dist-cell" style="color:#d2a8ff">1</div><div class="dist-cell" style="color:#d2a8ff">2</div>
+              <div class="dist-cell" style="color:#d2a8ff">2</div><div class="dist-cell" style="color:#d2a8ff">2</div><div class="dist-cell" style="color:#d2a8ff">2</div><div class="dist-cell" style="color:#d2a8ff">2</div><div class="dist-cell" style="color:#d2a8ff">2</div>
+            </div>
+          </div>
+        </div>
+        <div class="callout info"><div class="icon">💡</div><div class="body"><strong>D₄ = 1</strong> gives 4-neighbors. <strong>D₈ = 1</strong> gives 8-neighbors (includes diagonals).</div></div>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <div class="card-header">📐 Worked Numerical 5 <span class="tag">m-adjacency / Dm distance</span></div>
+      <div class="card-body">
+        <p><strong>Q (Textbook pg. 82–83):</strong> Given pixels p, p₂, p₄ with value 1, and p₁, p₃ with value 0 or 1, find the Dm (shortest m-path) distance between p and p₄.</p>
+        <div class="step"><strong>Case 1:</strong> p₁ = 0, p₃ = 0 → Dm(p, p₄) = <strong>2</strong> (direct m-path via p₂)</div>
+        <div class="step"><strong>Case 2:</strong> p₁ = 1, p₃ = 0 → p and p₂ are no longer m-adjacent → path = p→p₁→p₂→p₄ → Dm = <strong>3</strong></div>
+        <div class="step"><strong>Case 3:</strong> p₁ = 0, p₃ = 1 → path = p→p₂→p₃→p₄ → Dm = <strong>3</strong></div>
+        <div class="step"><strong>Case 4:</strong> p₁ = 1, p₃ = 1 → path = p→p₁→p₂→p₃→p₄ → Dm = <strong>4</strong></div>
+        <div class="callout"><div class="icon">⚠</div><div class="body">Unlike D₄ and D₈, <strong>Dm depends on pixel values</strong> along the path, not just coordinates.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 3: GRAY LEVEL TRANSFORMATIONS -->
+  <!-- ================================================================ -->
+  <div class="section" id="s3">
+    <div class="section-header">
+      <div class="section-num c3">3</div>
+      <h2>Gray-Level Transformations</h2>
+    </div>
+
+    <div class="formula-box green">
+      Image Negative:   s = (L − 1) − r            &nbsp;&nbsp; [for 8-bit: s = 255 − r]
+      <br>
+      Log transform:    s = c · log(1 + r)           &nbsp;&nbsp; Eq. (3-4)
+      <br>
+      Power-law (Gamma):  s = c · r<sup>γ</sup>     &nbsp;&nbsp; Eq. (3-5)
+      <br>
+      [γ &lt; 1 → brightens dark images;  γ &gt; 1 → darkens bright images]
+    </div>
+
+    <div class="example-card">
+      <div class="card-header">📐 Worked Numerical 6 <span class="tag">Image Negative</span></div>
+      <div class="card-body">
+        <p><strong>Q:</strong> An 8-bit image (L = 256) has pixel values: 0, 50, 100, 200, 255. Find the negative image pixel values.</p>
+        <div class="step"><strong>Formula:</strong> s = 255 − r</div>
+        <div class="step">r = 0   → s = 255 − 0 = <strong>255</strong></div>
+        <div class="step">r = 50  → s = 255 − 50 = <strong>205</strong></div>
+        <div class="step">r = 100 → s = 255 − 100 = <strong>155</strong></div>
+        <div class="step">r = 200 → s = 255 − 200 = <strong>55</strong></div>
+        <div class="step">r = 255 → s = 255 − 255 = <strong>0</strong></div>
+        <div class="callout info"><div class="icon">💡</div><div class="body">The negative of an image reverses light and dark areas — useful in medical imaging (e.g., mammograms).</div></div>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <div class="card-header">📐 Worked Numerical 7 <span class="tag">Log Transformation</span></div>
+      <div class="card-body">
+        <p><strong>Q:</strong> Apply the log transform s = c·log(1 + r) with c = 1 to pixel values r = 0, 10, 100, 1000 (for a high dynamic range image).</p>
+        <div class="step">r = 0    → s = log(1 + 0) = log(1) = <strong>0</strong></div>
+        <div class="step">r = 10   → s = log(1 + 10) = log(11) ≈ <strong>2.40</strong></div>
+        <div class="step">r = 100  → s = log(1 + 100) = log(101) ≈ <strong>4.62</strong></div>
+        <div class="step">r = 1000 → s = log(1 + 1000) = log(1001) ≈ <strong>6.91</strong></div>
+        <p>The dynamic range is compressed from 0–1000 to 0–6.91. This is used for Fourier spectrum display.</p>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <div class="card-header">📐 Worked Numerical 8 <span class="tag">Power-Law / Gamma Correction (Example 3.1)</span></div>
+      <div class="card-body">
+        <p><strong>Q:</strong> A CRT monitor has gamma γ = 2.5. A pixel value r = 0.5 (normalized) appears on the screen. What is the displayed value, and what gamma correction must be applied?</p>
+        <div class="step"><strong>Monitor output:</strong> s = r<sup>2.5</sup> = 0.5<sup>2.5</sup> = 0.5² × 0.5<sup>0.5</sup> = 0.25 × 0.707 ≈ <strong>0.177</strong> (image appears dark)</div>
+        <div class="step"><strong>Correction exponent:</strong> Apply s = r<sup>1/2.5</sup> = r<sup>0.4</sup> as pre-processing</div>
+        <div class="step"><strong>After correction on monitor:</strong> (r<sup>0.4</sup>)<sup>2.5</sup> = r<sup>1.0</sup> = 0.5 ✓ (faithful reproduction)</div>
+        <div class="callout green"><div class="icon">✓</div><div class="body">Gamma correction formula: apply s = r<sup>(1/γ)</sup> before displaying on device with gamma γ.</div></div>
+        <p><strong>Textbook rule (Eq. 3-5):</strong> γ &lt; 1 (e.g., 0.4) → expands dark regions (brightens). γ &gt; 1 (e.g., 3.0) → compresses bright regions (darkens washed-out images).</p>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <div class="card-header">📐 Worked Numerical 9 <span class="tag">Gamma on Integer Pixel Values</span></div>
+      <div class="card-body">
+        <p><strong>Q:</strong> Apply power-law transform with c = 1, γ = 0.5 to 8-bit pixel values r = 64, 128, 192. (L = 256)</p>
+        <p>Normalize to [0,1]: divide by 255. Apply transform. Rescale to [0,255].</p>
+        <div class="step">r = 64:  r_norm = 64/255 ≈ 0.251 → s_norm = 0.251<sup>0.5</sup> ≈ 0.501 → s = 0.501 × 255 ≈ <strong>128</strong></div>
+        <div class="step">r = 128: r_norm = 128/255 ≈ 0.502 → s_norm = 0.502<sup>0.5</sup> ≈ 0.708 → s = 0.708 × 255 ≈ <strong>181</strong></div>
+        <div class="step">r = 192: r_norm = 192/255 ≈ 0.753 → s_norm = 0.753<sup>0.5</sup> ≈ 0.868 → s = 0.868 × 255 ≈ <strong>221</strong></div>
+        <div class="callout info"><div class="icon">💡</div><div class="body">γ = 0.5 &lt; 1 brightens the image — dark pixels are mapped to much higher values.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 4: HISTOGRAM EQUALIZATION & SPECIFICATION -->
+  <!-- ================================================================ -->
+  <div class="section" id="s4">
+    <div class="section-header">
+      <div class="section-num c4">4</div>
+      <h2>Histogram Equalization &amp; Specification</h2>
+    </div>
+
+    <p>The most common exam numerical. Always involves computing the PDF, CDF, and mapped intensity values.</p>
+
+    <div class="formula-box purple">
+      PDF (Histogram):  p(r<sub>k</sub>) = n<sub>k</sub> / MN    &nbsp;&nbsp; Eq. (3-14)
+      <br>
+      CDF → Equalized value:  s<sub>k</sub> = (L−1) · Σ p(r<sub>j</sub>)  for j=0 to k   &nbsp;&nbsp; Eq. (3-15)
+      <br>
+      Round s<sub>k</sub> to nearest integer in [0, L−1]
+    </div>
+
+    <div class="example-card">
+      <div class="card-header">📐 Worked Numerical 10 <span class="tag">Example 3.5 — Full Histogram Equalization</span></div>
+      <div class="card-body">
+        <p><strong>Q (Textbook Example 3.5, pg. 138–139):</strong> A 3-bit image (L = 8, so levels 0–7) of size 64 × 64 pixels (MN = 4096) has the following intensity distribution. Perform histogram equalization.</p>
+
+        <table class="data-table">
+          <tr>
+            <th>r<sub>k</sub></th>
+            <th>n<sub>k</sub> (pixel count)</th>
+            <th>p(r<sub>k</sub>) = n<sub>k</sub>/4096</th>
+            <th>CDF = Σp</th>
+            <th>s<sub>k</sub> = 7 × CDF</th>
+            <th>Rounded s<sub>k</sub></th>
+          </tr>
+          <tr><td>0</td><td>790</td><td>0.19</td><td>0.19</td><td>1.33</td><td><strong>1</strong></td></tr>
+          <tr><td>1</td><td>1023</td><td>0.25</td><td>0.44</td><td>3.08</td><td><strong>3</strong></td></tr>
+          <tr><td>2</td><td>850</td><td>0.21</td><td>0.65</td><td>4.55</td><td><strong>5</strong></td></tr>
+          <tr><td>3</td><td>656</td><td>0.16</td><td>0.81</td><td>5.67</td><td><strong>6</strong></td></tr>
+          <tr><td>4</td><td>329</td><td>0.08</td><td>0.89</td><td>6.23</td><td><strong>6</strong></td></tr>
+          <tr><td>5</td><td>245</td><td>0.06</td><td>0.95</td><td>6.65</td><td><strong>7</strong></td></tr>
+          <tr><td>6</td><td>122</td><td>0.03</td><td>0.98</td><td>6.86</td><td><strong>7</strong></td></tr>
+          <tr><td>7</td><td>81</td><td>0.02</td><td>1.00</td><td>7.00</td><td><strong>7</strong></td></tr>
+        </table>
+
+        <p style="margin-top:1rem"><strong>Result:</strong> Only 5 distinct output levels (1, 3, 5, 6, 7) are produced.</p>
+        <div class="step">r₀=0 → s=1: 790 pixels</div>
+        <div class="step">r₁=1 → s=3: 1023 pixels</div>
+        <div class="step">r₂=2 → s=5: 850 pixels</div>
+        <div class="step">r₃=3 &amp; r₄=4 → s=6: 656 + 329 = <strong>985 pixels</strong></div>
+        <div class="step">r₅=5, r₆=6, r₇=7 → s=7: 245 + 122 + 81 = <strong>448 pixels</strong></div>
+        <div class="callout green"><div class="icon">✓</div><div class="body">When multiple r<sub>k</sub> values map to the same s<sub>k</sub>, <strong>sum their pixel counts</strong> in the equalized histogram.</div></div>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <div class="card-header">📐 Worked Numerical 11 <span class="tag">Example 3.7 — Histogram Specification</span></div>
+      <div class="card-body">
+        <p><strong>Q (Textbook Example 3.7, pg. 145–147):</strong> Using the same 64×64, 3-bit image from above, apply histogram specification to match the target histogram below.</p>
+
+        <table class="data-table">
+          <tr><th>z<sub>q</sub></th><th>Specified p<sub>z</sub>(z<sub>q</sub>)</th><th>G(z<sub>q</sub>) = 7·CDF</th><th>Rounded G(z<sub>q</sub>)</th></tr>
+          <tr><td>0</td><td>0.00</td><td>0.00</td><td>0</td></tr>
+          <tr><td>1</td><td>0.00</td><td>0.00</td><td>0</td></tr>
+          <tr><td>2</td><td>0.00</td><td>0.00</td><td>0</td></tr>
+          <tr><td>3</td><td>0.15</td><td>1.05</td><td>1</td></tr>
+          <tr><td>4</td><td>0.20</td><td>2.45</td><td>2</td></tr>
+          <tr><td>5</td><td>0.30</td><td>4.55</td><td>5</td></tr>
+          <tr><td>6</td><td>0.20</td><td>5.95</td><td>6</td></tr>
+          <tr><td>7</td><td>0.15</td><td>7.00</td><td>7</td></tr>
+        </table>
+
+        <p style="margin-top: 1rem"><strong>Step 3 – Map equalized values s<sub>k</sub> → z<sub>q</sub>:</strong> Find smallest z<sub>q</sub> where G(z<sub>q</sub>) closest to s<sub>k</sub>.</p>
+        <table class="data-table">
+          <tr><th>s<sub>k</sub></th><th>→</th><th>z<sub>q</sub></th><th>Reason: G(z<sub>q</sub>) closest to s<sub>k</sub></th></tr>
+          <tr><td>1</td><td>→</td><td><strong>3</strong></td><td>G(z₃) = 1 (exact match)</td></tr>
+          <tr><td>3</td><td>→</td><td><strong>4</strong></td><td>G(z₄) = 2 (closest to 3)</td></tr>
+          <tr><td>5</td><td>→</td><td><strong>5</strong></td><td>G(z₅) = 5 (exact match)</td></tr>
+          <tr><td>6</td><td>→</td><td><strong>6</strong></td><td>G(z₆) = 6 (exact match)</td></tr>
+          <tr><td>7</td><td>→</td><td><strong>7</strong></td><td>G(z₇) = 7 (exact match)</td></tr>
+        </table>
+        <div class="callout"><div class="icon">⚠</div><div class="body"><strong>3-step procedure:</strong> (1) Equalize original image. (2) Compute G(z<sub>q</sub>) for specified histogram. (3) Map each s<sub>k</sub> to z<sub>q</sub> with closest G value.</div></div>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <div class="card-header">📐 Worked Numerical 12 <span class="tag">Example 3.4 — Continuous PDF &amp; CDF</span></div>
+      <div class="card-body">
+        <p><strong>Q (Textbook Example 3.4, pg. 137):</strong> An image has intensity PDF: p<sub>r</sub>(r) = 2r/(L−1)² for 0 ≤ r ≤ L−1. Show the equalization transformation and verify the output PDF is uniform.</p>
+        <div class="step"><strong>Transformation (Eq. 3-11):</strong> s = T(r) = (L−1) ∫₀ʳ p<sub>r</sub>(w)dw</div>
+        <div class="step">= (L−1) × ∫₀ʳ [2w/(L−1)²] dw = (L−1) × [w²/(L−1)²]₀ʳ = r²/(L−1)</div>
+        <div class="step"><strong>Verify output is uniform:</strong> ps(s) = p<sub>r</sub>(r)|dr/ds|</div>
+        <div class="step">Since s = r²/(L−1), so ds/dr = 2r/(L−1), then |dr/ds| = (L−1)/(2r)</div>
+        <div class="step">ps(s) = [2r/(L−1)²] × [(L−1)/(2r)] = <strong>1/(L−1)</strong> ✓ (uniform)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 5: SPATIAL FILTERING -->
+  <!-- ================================================================ -->
+  <div class="section" id="s5">
+    <div class="section-header">
+      <div class="section-num c5">5</div>
+      <h2>Spatial Filtering – Smoothing &amp; Sharpening</h2>
+    </div>
+
+    <p>Apply a kernel/mask over a pixel's neighborhood and compute the weighted sum. The center of the kernel is placed on the pixel of interest.</p>
+
+    <div class="formula-box orange">
+      Spatial Convolution:  g(x,y) = Σ Σ w(s,t) · f(x+s, y+t)
+      <br>
+      Averaging (Box) filter kernel (3×3):  all 9 elements = 1/9
+      <br>
+      Normalized kernel:  coefficients sum = 1 (preserves average brightness)
+    </div>
+
+    <div class="example-card">
+      <div class="card-header">📐 Worked Numerical 13 <span class="tag">3×3 Averaging Filter</span></div>
+      <div class="card-body">
+        <p><strong>Q:</strong> Apply a 3×3 box (averaging) filter to the center pixel of the following image region.</p>
+        <div class="kernels-row">
+          <div>
+            <div class="kernel-label">Image Region (f)</div>
+            <div class="kernel-grid">
+              <table>
+                <tr><td>10</td><td>20</td><td>30</td></tr>
+                <tr><td>40</td><td>50</td><td>60</td></tr>
+                <tr><td>70</td><td>80</td><td>90</td></tr>
+              </table>
+            </div>
+          </div>
+          <div style="font-size:2rem; color:var(--text-muted); align-self:center">×</div>
+          <div>
+            <div class="kernel-label">Box Kernel (w) = 1/9</div>
+            <div class="kernel-grid">
+              <table>
+                <tr><td>1</td><td>1</td><td>1</td></tr>
+                <tr><td>1</td><td class="center">1</td><td>1</td></tr>
+                <tr><td>1</td><td>1</td><td>1</td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="step"><strong>Sum of all 9 values:</strong> 10+20+30+40+50+60+70+80+90 = 450</div>
+        <div class="step"><strong>Filtered value:</strong> 450 / 9 = <strong>50</strong> (same as center pixel in this uniform ramp — center value preserved)</div>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <div class="card-header">📐 Worked Numerical 14 <span class="tag">3×3 Median Filter</span></div>
+      <div class="card-body">
+        <p><strong>Q (Textbook pg. 175):</strong> A 3×3 neighborhood has pixel values: 10, 20, 20, 20, 15, 20, 20, 25, 100. Find the median-filtered output value.</p>
+        <div class="step"><strong>Sort ascending:</strong> {10, 15, 20, 20, 20, 20, 20, 25, 100}</div>
+        <div class="step"><strong>Median (5th value in 9-element sorted list):</strong> <strong>20</strong></div>
+        <div class="step">The outlier value 100 (salt noise) is completely eliminated!</div>
+        <div class="callout green"><div class="icon">✓</div><div class="body">Median filter is superior to averaging for salt-and-pepper noise because it eliminates spikes without blurring edges.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 6: DERIVATIVE FILTERS -->
+  <!-- ================================================================ -->
+  <div class="section" id="s6">
+    <div class="section-header">
+      <div class="section-num c6">6</div>
+      <h2>First &amp; Second Derivative Filters</h2>
+    </div>
+
+    <div class="formula-box green">
+      1st Derivative (Gradient magnitude):
+      <br>
+      &nbsp; ∇f ≈ |g<sub>x</sub>| + |g<sub>y</sub>|  (approx.)   or   √(g<sub>x</sub>² + g<sub>y</sub>²)  Eq. (3-58,59)
+      <br><br>
+      2nd Derivative (Laplacian):
+      <br>
+      &nbsp; ∇²f = f(x+1,y) + f(x−1,y) + f(x,y+1) + f(x,y−1) − 4f(x,y)  Eq. (3-51)
+      <br><br>
+      Sharpened image:   g(x,y) = f(x,y) + c·∇²f   Eq. (3-54)
+      <br>
+      &nbsp; c = −1 if kernel has negative center;  c = +1 if kernel has positive center
+    </div>
+
+    <p><strong>Standard Kernels from the Textbook (Fig. 3.45, 3.50):</strong></p>
+    <div class="kernels-row">
+      <div>
+        <div class="kernel-label">Laplacian (−4 center)</div>
+        <div class="kernel-grid">
+          <table>
+            <tr><td>0</td><td>1</td><td>0</td></tr>
+            <tr><td>1</td><td class="center">−4</td><td>1</td></tr>
+            <tr><td>0</td><td>1</td><td>0</td></tr>
+          </table>
+        </div>
+      </div>
+      <div>
+        <div class="kernel-label">Laplacian (−8 center, diagonal)</div>
+        <div class="kernel-grid">
+          <table>
+            <tr><td>1</td><td>1</td><td>1</td></tr>
+            <tr><td>1</td><td class="center">−8</td><td>1</td></tr>
+            <tr><td>1</td><td>1</td><td>1</td></tr>
+          </table>
+        </div>
+      </div>
+      <div>
+        <div class="kernel-label">Sobel g<sub>x</sub> (Eq. 3-63)</div>
+        <div class="kernel-grid">
+          <table>
+            <tr><td>−1</td><td>−2</td><td>−1</td></tr>
+            <tr><td>0</td><td class="center">0</td><td>0</td></tr>
+            <tr><td>1</td><td>2</td><td>1</td></tr>
+          </table>
+        </div>
+      </div>
+      <div>
+        <div class="kernel-label">Sobel g<sub>y</sub> (Eq. 3-63)</div>
+        <div class="kernel-grid">
+          <table>
+            <tr><td>−1</td><td>0</td><td>1</td></tr>
+            <tr><td>−2</td><td class="center">0</td><td>2</td></tr>
+            <tr><td>−1</td><td>0</td><td>1</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <div class="card-header">📐 Worked Numerical 15 <span class="tag">Laplacian on a Pixel Region</span></div>
+      <div class="card-body">
+        <p><strong>Q:</strong> Apply the Laplacian (−4 center kernel) to the 3×3 region below and compute the sharpened output at the center pixel (value = 80).</p>
+        <div class="kernels-row">
+          <div>
+            <div class="kernel-label">Image Region</div>
+            <div class="kernel-grid">
+              <table>
+                <tr><td>0</td><td>0</td><td>0</td></tr>
+                <tr><td>0</td><td class="center">80</td><td>0</td></tr>
+                <tr><td>0</td><td>0</td><td>0</td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="step"><strong>∇²f</strong> = f(x+1,y) + f(x−1,y) + f(x,y+1) + f(x,y−1) − 4·f(x,y)</div>
+        <div class="step">= 0 + 0 + 0 + 0 − 4 × 80 = <strong>−320</strong></div>
+        <div class="step"><strong>Sharpened (c = −1 for −4 center kernel):</strong> g = f + (−1)·∇²f = 80 − (−320) = <strong>400</strong></div>
+        <div class="callout"><div class="icon">⚠</div><div class="body">Result may exceed [0, 255] range → clipping or scaling required. This is expected behavior at sharp edges.</div></div>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <div class="card-header">📐 Worked Numerical 16 <span class="tag">Sobel Gradient Calculation</span></div>
+      <div class="card-body">
+        <p><strong>Q:</strong> Compute the Sobel gradient magnitude at the center pixel of this 3×3 region.</p>
+        <div class="kernels-row">
+          <div>
+            <div class="kernel-label">Image Region f</div>
+            <div class="kernel-grid">
+              <table>
+                <tr><td>10</td><td>10</td><td>10</td></tr>
+                <tr><td>10</td><td class="center">10</td><td>10</td></tr>
+                <tr><td>50</td><td>50</td><td>50</td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="step"><strong>g<sub>x</sub></strong> (Sobel, 3rd row − 1st row, weighted):
+          = (1·50 + 2·50 + 1·50) − (1·10 + 2·10 + 1·10) = 200 − 40 = <strong>160</strong></div>
+        <div class="step"><strong>g<sub>y</sub></strong> (Sobel, 3rd col − 1st col, weighted):
+          = (1·10 + 2·10 + 1·50) − (1·10 + 2·10 + 1·50) = 0 (symmetric in y-direction)</div>
+        <div class="step"><strong>Gradient magnitude:</strong> |∇f| = √(160² + 0²) = <strong>160</strong></div>
+        <div class="callout info"><div class="icon">💡</div><div class="body">Large g<sub>x</sub> value confirms a strong horizontal edge (the sharp row transition from 10 to 50).</div></div>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <div class="card-header">📐 Worked Numerical 17 <span class="tag">Unsharp Masking / Highboost (Example 3.19)</span></div>
+      <div class="card-body">
+        <p><strong>Formulas:</strong> mask = f(x,y) − f̄(x,y) [blurred] &nbsp;|&nbsp; g(x,y) = f + k·mask &nbsp;&nbsp; Eq. (3-55, 3-56)</p>
+        <p>k = 1 → unsharp masking. k &gt; 1 → highboost filtering.</p>
+        <div class="step"><strong>Q:</strong> If original pixel = 100, blurred pixel = 80, and k = 1.5:</div>
+        <div class="step">mask = 100 − 80 = 20</div>
+        <div class="step">g = 100 + 1.5 × 20 = 100 + 30 = <strong>130</strong></div>
+        <div class="callout green"><div class="icon">✓</div><div class="body">Highboost with k &gt; 1 amplifies edges more aggressively than simple unsharp masking.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 7: 2D DFT -->
+  <!-- ================================================================ -->
+  <div class="section" id="s7">
+    <div class="section-header">
+      <div class="section-num c7">7</div>
+      <h2>2D Discrete Fourier Transform (DFT) &amp; Inverse</h2>
+    </div>
+
+    <div class="formula-box red">
+      1D DFT:  F(u) = Σ f(x) · e<sup>−j2πux/M</sup>  for x=0..M−1   &nbsp; Eq. (4-44)
+      <br>
+      1D IDFT: f(x) = (1/M) Σ F(u) · e<sup>j2πux/M</sup>  for u=0..M−1
+      <br><br>
+      2D DFT:  F(u,v) = ΣΣ f(x,y) · e<sup>−j2π(ux/M + vy/N)</sup>   Eq. (2-61)
+      <br>
+      2D IDFT: f(x,y) = (1/MN) ΣΣ F(u,v) · e<sup>j2π(ux/M + vy/N)</sup>  Eq. (2-62)
+      <br><br>
+      Euler's formula:  e<sup>−jθ</sup> = cos(θ) − j·sin(θ)
+    </div>
+
+    <div class="example-card">
+      <div class="card-header">📐 Worked Numerical 18 <span class="tag">Example 4.4 — 1D DFT (4-point sequence)</span></div>
+      <div class="card-body">
+        <p><strong>Q (Textbook Example 4.4, pg. 229):</strong> Compute the DFT of the 4-sample sequence f = {1, 2, 4, 4} (M = 4).</p>
+        <div class="formula-box red" style="margin: 0.8rem 0">F(u) = Σ<sub>x=0</sub><sup>3</sup> f(x) · e<sup>−j2πux/4</sup></div>
+
+        <div class="step"><strong>F(0):</strong> = Σ f(x) · e⁰ = f(0)+f(1)+f(2)+f(3) = 1+2+4+4 = <strong>11</strong></div>
+        <div class="step"><strong>F(1):</strong> = 1·e⁰ + 2·e<sup>−jπ/2</sup> + 4·e<sup>−jπ</sup> + 4·e<sup>−j3π/2</sup>
+          <br>&nbsp;&nbsp; = 1·(1) + 2·(−j) + 4·(−1) + 4·(j)
+          <br>&nbsp;&nbsp; = 1 − 2j − 4 + 4j = <strong>−3 + 2j</strong></div>
+        <div class="step"><strong>F(2):</strong> = 1·e⁰ + 2·e<sup>−jπ</sup> + 4·e<sup>−j2π</sup> + 4·e<sup>−j3π</sup>
+          <br>&nbsp;&nbsp; = 1 + 2·(−1) + 4·(1) + 4·(−1) = 1 − 2 + 4 − 4 = <strong>−1</strong></div>
+        <div class="step"><strong>F(3):</strong> = conjugate of F(1) = <strong>−3 − 2j</strong> (for real input)</div>
+
+        <p style="margin-top:0.8rem"><strong>Verify IDFT – recover f(0):</strong></p>
+        <div class="step">f(0) = (1/4)·[F(0)+F(1)+F(2)+F(3)] = (1/4)·[11+(−3+2j)+(−1)+(−3−2j)] = (1/4)·[4] = <strong>1 ✓</strong></div>
+        <div class="callout info"><div class="icon">💡</div><div class="body">For real-valued input, F(M−u) = F*(u) (complex conjugate symmetry). F(0) is always real and equals the sum of all samples.</div></div>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <div class="card-header">📐 Worked Numerical 19 <span class="tag">Key DFT Values to Remember</span></div>
+      <div class="card-body">
+        <p>Using Euler's formula: e<sup>−jπ</sup> = −1, e<sup>−jπ/2</sup> = −j, e<sup>−j2π</sup> = 1</p>
+        <table class="data-table">
+          <tr><th>θ</th><th>e<sup>−jθ</sup></th><th>cos(θ)</th><th>−j·sin(θ)</th></tr>
+          <tr><td>0</td><td>1</td><td>1</td><td>0</td></tr>
+          <tr><td>π/2</td><td>−j</td><td>0</td><td>−j</td></tr>
+          <tr><td>π</td><td>−1</td><td>−1</td><td>0</td></tr>
+          <tr><td>3π/2</td><td>+j</td><td>0</td><td>+j</td></tr>
+          <tr><td>2π</td><td>1</td><td>1</td><td>0</td></tr>
+        </table>
+        <div class="callout green"><div class="icon">✓</div><div class="body">Memorize these values — they allow you to compute DFT of small sequences by hand without a calculator.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================================================================ -->
+  <!-- SECTION 8: FREQUENCY DOMAIN FILTERING -->
+  <!-- ================================================================ -->
+  <div class="section" id="s8">
+    <div class="section-header">
+      <div class="section-num c8">8</div>
+      <h2>Frequency Domain Filtering</h2>
+    </div>
+
+    <div class="formula-box purple">
+      Steps for frequency-domain filtering:
+      <br>
+      1. Pad f(x,y) to size P×Q (to avoid wrap-around error)
+      <br>
+      2. Compute F(u,v) = DFT[f(x,y)]
+      <br>
+      3. Multiply: G(u,v) = H(u,v) · F(u,v)   [H = filter transfer function]
+      <br>
+      4. Inverse DFT: g(x,y) = IDFT[G(u,v)]
+      <br>
+      5. Extract top-left M×N portion
+      <br><br>
+      Computational advantage of FFT vs non-separable spatial: C<sub>n</sub>(m) = m² / (4·log₂M)  Eq. (4-1)
+      <br>
+      vs separable spatial kernel:  C<sub>s</sub>(m) = m / (2·log₂M)   Eq. (4-2)
+    </div>
+
+    <div class="example-card">
+      <div class="card-header">📐 Worked Numerical 20 <span class="tag">FFT Computational Advantage</span></div>
+      <div class="card-body">
+        <p><strong>Q (Textbook Eq. 4-1, pg. 205):</strong> For a 512×512 image (M = 512) and a 15×15 non-separable kernel, is FFT or spatial convolution faster?</p>
+        <div class="step"><strong>C<sub>n</sub>(m)</strong> = m² / (4·log₂M) = 15² / (4·log₂512) = 225 / (4×9) = 225/36 = <strong>6.25</strong></div>
+        <div class="step">Since C<sub>n</sub>(15) = 6.25 &gt; 1, the FFT approach is <strong>6.25× faster</strong> than non-separable convolution.</div>
+        <div class="callout green"><div class="icon">✓</div><div class="body">For large kernels (m &gt; ~3 for typical image sizes), frequency domain filtering is computationally superior.</div></div>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <div class="card-header">📐 Worked Numerical 21 <span class="tag">Ideal Lowpass Filter (ILPF) Cutoff</span></div>
+      <div class="card-body">
+        <p><strong>Q:</strong> For an ideal lowpass filter in the frequency domain, define the transfer function. Given D₀ = 50, is a frequency component at (u,v) = (30, 40) passed or rejected?</p>
+        <div class="formula-box purple" style="margin: 0.7rem 0">
+          H(u,v) = 1 if D(u,v) ≤ D₀
+          <br>
+          H(u,v) = 0 if D(u,v) &gt; D₀
+          <br>
+          where D(u,v) = √(u² + v²)  (distance from origin)
+        </div>
+        <div class="step">D(30, 40) = √(30² + 40²) = √(900 + 1600) = √2500 = <strong>50</strong></div>
+        <div class="step">Since D(u,v) = D₀ = 50, this frequency is exactly at the cutoff → <strong>passed</strong> (H = 1)</div>
+        <div class="callout"><div class="icon">⚠</div><div class="body">Low frequencies (near origin) → slowly varying regions (smooth backgrounds). High frequencies → edges and fine details.</div></div>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <div class="card-header">📐 Worked Numerical 22 <span class="tag">Highpass from Lowpass</span></div>
+      <div class="card-body">
+        <p><strong>Q:</strong> If a lowpass filter has H<sub>LP</sub>(u,v), what is the transfer function of the corresponding highpass filter?</p>
+        <div class="formula-box purple" style="margin: 0.7rem 0">
+          H<sub>HP</sub>(u,v) = 1 − H<sub>LP</sub>(u,v)
+        </div>
+        <div class="step">For ILPF with D₀ = 50, if H<sub>LP</sub>(u,v) = 1 at D ≤ 50, then H<sub>HP</sub>(u,v) = 0 at D ≤ 50 (blocks low freq)</div>
+        <div class="step">And H<sub>HP</sub>(u,v) = 1 at D &gt; 50 (passes high freq = edges)</div>
+        <div class="callout info"><div class="icon">💡</div><div class="body">In spatial domain: highpass kernel = unit impulse − lowpass kernel. Unsharp masking is exactly this operation.</div></div>
+      </div>
+    </div>
+
+    <div class="example-card">
+      <div class="card-header">📐 Worked Numerical 23 <span class="tag">Example 4.15 — Spatial Kernel ↔ Frequency Transfer Function</span></div>
+      <div class="card-body">
+        <p><strong>Concept (Textbook Example 4.15):</strong> A spatial kernel can be embedded in a zero-padded array and DFT-computed to obtain its frequency-domain equivalent H(u,v). This allows comparison of spatial vs frequency filtering.</p>
+        <div class="step"><strong>Key insight:</strong> Sobel kernel (from Section 6) embedded in a P×Q zero-padded array → compute 2D DFT → get H<sub>Sobel</sub>(u,v)</div>
+        <div class="step">The kernel has purely imaginary DFT (since it is an odd function) → results are identical to spatial convolution.</div>
+        <div class="callout green"><div class="icon">✓</div><div class="body">Spatial domain convolution ≡ multiplication in the frequency domain (Convolution theorem).</div></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- QUICK REFERENCE -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num" style="background:#58a6ff; width:auto; border-radius:4px; padding: 0 10px; height:28px; font-size:0.7rem; letter-spacing:1px">QUICK REF</div>
+      <h2>Formula Quick-Reference Card</h2>
+    </div>
+    <table class="data-table" style="font-family:'IBM Plex Sans',sans-serif; font-size:0.85rem">
+      <tr><th style="text-align:left; width:28%">Concept</th><th style="text-align:left">Formula</th><th style="text-align:left; width:20%">Equation</th></tr>
+      <tr><td>Gray levels</td><td>L = 2<sup>k</sup></td><td>Eq. (2-11)</td></tr>
+      <tr><td>Storage (bits)</td><td>b = M × N × k</td><td>Eq. (2-12)</td></tr>
+      <tr><td>Euclidean distance</td><td>D<sub>e</sub> = √[(x−u)² + (y−v)²]</td><td>Eq. (2-19)</td></tr>
+      <tr><td>City-block distance</td><td>D₄ = |x−u| + |y−v|</td><td>Eq. (2-20)</td></tr>
+      <tr><td>Chessboard distance</td><td>D₈ = max(|x−u|, |y−v|)</td><td>Eq. (2-21)</td></tr>
+      <tr><td>Image negative</td><td>s = (L−1) − r</td><td>–</td></tr>
+      <tr><td>Log transform</td><td>s = c·log(1 + r)</td><td>Eq. (3-4)</td></tr>
+      <tr><td>Power-law (gamma)</td><td>s = c·r<sup>γ</sup></td><td>Eq. (3-5)</td></tr>
+      <tr><td>Histogram PDF</td><td>p(r<sub>k</sub>) = n<sub>k</sub> / MN</td><td>Eq. (3-14)</td></tr>
+      <tr><td>Histogram equalization</td><td>s<sub>k</sub> = (L−1)·Σ p(r<sub>j</sub>), j=0..k</td><td>Eq. (3-15)</td></tr>
+      <tr><td>Laplacian (4-neighbor)</td><td>∇²f = f(x+1,y)+f(x−1,y)+f(x,y+1)+f(x,y−1)−4f(x,y)</td><td>Eq. (3-51)</td></tr>
+      <tr><td>Laplacian sharpening</td><td>g = f + c·∇²f &nbsp;(c=±1)</td><td>Eq. (3-54)</td></tr>
+      <tr><td>Unsharp mask</td><td>g = f + k·(f − f̄)</td><td>Eq. (3-56)</td></tr>
+      <tr><td>Gradient magnitude</td><td>|∇f| = √(g<sub>x</sub>² + g<sub>y</sub>²)</td><td>Eq. (3-58)</td></tr>
+      <tr><td>1D DFT</td><td>F(u) = Σ f(x)·e<sup>−j2πux/M</sup></td><td>Eq. (4-44)</td></tr>
+      <tr><td>Highpass from lowpass</td><td>H<sub>HP</sub> = 1 − H<sub>LP</sub></td><td>–</td></tr>
+      <tr><td>FFT advantage (non-sep)</td><td>C<sub>n</sub>(m) = m² / (4·log₂M)</td><td>Eq. (4-1)</td></tr>
+    </table>
+  </div>
+
+  <p style="text-align:center; color:var(--text-dim); font-size:0.8rem; margin-top:2rem">
+    Source: Digital Image Processing, 4th Edition · Gonzalez &amp; Woods · Chapters 2, 3, 4
+  </p>
+
+</div>
+</body>
+</html>
